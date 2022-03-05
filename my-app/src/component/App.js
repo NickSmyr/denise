@@ -61,7 +61,7 @@ export default class App extends React.Component {
                 <Button onClick={this.toDeniseChat} text={"Meet Denise"} />
             </div>
             <div className='footer'>
-                <p>Contact us at blah@denise.cloud</p>
+                <p>Contact us at support@denise.cloud</p>
             </div>
         </div>  
       );

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM node:16
-WORKDIR /usr/my-app/
+FROM postgres:latest
+WORKDIR /usr/database/
 COPY . .
 
 RUN npm install
