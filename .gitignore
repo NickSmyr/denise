@@ -3,4 +3,6 @@ node_modules
 ./my-app/node_modules
 ./my-app/public/dist
 .dbuserpass
+venv
+__pycache__
 

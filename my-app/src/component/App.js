@@ -1,4 +1,5 @@
 import React from 'react';
+import Header from './Header';
 
 function Button(props){
     return (
@@ -26,14 +27,13 @@ export default class App extends React.Component {
             value.style.animation = "disappear 1s forwards"
             }
         )
+        window.location.href = "./chat.html";
     }
   
     render() {
       return (
         <div className='app-container'>
-            <div className='header'>
-                <p>Denise</p>
-            </div>
+            <Header/>
             <div className='content'>
                 <p className='welcomemessage'>
                     Welcome to Denise.cloud

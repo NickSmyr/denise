@@ -90,6 +90,70 @@ button {
     width: 100%;
    }
 
+    #img {
+        content: url("/send-icon.png");
+        width: max(5%, 50px);
+        border-width: 2px;
+        border: solid;
+        border-radius: 20px;
+    }
+    #prompt-div {
+        display: flex;
+        width: 100%;
+        height: max(10vh,50px);
+    }
+    #prompt-div * {
+        margin: 5px;
+    }
+    #prompt {
+        border-width: 2px;
+        border-radius: 5px;
+        border: solid;
+        flex-grow: 1;
+    }
+    #main {
+        display: flex;
+        margin-left:15vw;
+        margin-right:15vw;
+        flex-direction: column;
+    }
+
+    .user-message-container {
+        display: flex;
+        justify-content: flex-end;
+        margin: 5px;
+    }
+    .denise-message-container {
+        margin: 5px;
+    }
+
+    .user-message {
+        color: black;
+        width: 40%;
+        background-color: gainsboro;
+        border-radius: 20px;
+        padding: 5px;
+    }
+    .user-message p {
+        margin: 5px;    
+    }
+    .denise-message p {
+        margin: 5px;
+    }  
+    .denise-message {
+        color: black;
+        width: 40%;
+        background-color: rgb(233, 180, 228);
+        border-radius: 20px;
+        padding: 5px;
+    }
+
+    #past-messages {
+        margin: 5px;
+        height: 70vh;
+        overflow-y: auto;
+    }
+
    /* Animation test */
    @keyframes disappear {
     from {opacity: 1;}

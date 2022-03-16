@@ -2,7 +2,10 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
-  entry: "./src/react.js",
+  entry: {
+    index : "./src/react.js",
+    chat : "./src/chat.js"
+  },
   mode: "development",
   module: {
     rules: [
@@ -15,15 +18,23 @@ module.exports = {
       {
         test: /\.css$/,
         use: ["style-loader", "css-loader"]
-      }
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg)$/i, 
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]'
+        }
+    }
     ]
   },
   resolve: { extensions: ["*", ".js", ".jsx"] },
   output: {
     path: path.resolve(__dirname + "/public/", "dist/"),
     publicPath: "/public/dist/",
-    filename: "bundle.js"
+    filename: "[name].bundle.js"
   },
+
   devServer: {
     contentBase: path.join(__dirname, "public/"),
     port: 3000,
@@ -31,4 +42,4 @@ module.exports = {
     hotOnly: true
   },
   plugins: [new webpack.HotModuleReplacementPlugin()]
-};
+}

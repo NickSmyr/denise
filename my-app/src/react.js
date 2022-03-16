@@ -6,11 +6,6 @@ import App from './component/App'
 
 const e = React.createElement;
 
-console.log("React js is executed")
-
-console.log("Succesfully loaded  App ", App)
-// ========================================
-
 //ReactDOM.render(
 //  <App />,
 //  document.getElementById('root')

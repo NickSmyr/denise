@@ -1,0 +1,1 @@
+psql -h 35.241.131.83 -p 5432 -U dbuser -W logging

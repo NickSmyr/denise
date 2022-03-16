@@ -2,12 +2,14 @@ const path = require("path");
 const express = require("express");
 const app = express(); // create express app
 const config = require('./config.js')
+const axios = require('axios')
 
 
 
 
 // Connect to  PSQL database
-const { Client } = require('pg')
+const { Client } = require('pg');
+const { DB_HOSTNAME, DJANGO_HOSTNAME } = require("./config.js");
 const client = new Client({
   user: config.DB_USER,
   host: config.DB_HOSTNAME,
@@ -22,11 +24,6 @@ client.connect(function(err) {
   console.log("Connected!");
 });
 
-// 
-client
-  .query('SELECT * from hits')
-  .then(res => console.log(res.rows))
-  .catch(e => console.error(e.stack))
 
 
 function logIpAndDate(ip, date){
@@ -45,13 +42,11 @@ function logIpAndDate(ip, date){
 app.get("/", (req, res) => {
   console.log("Request from ip " + req.socket.remoteAddress)
   var datetime = new Date();
-  console.log("Current date ", datetime)
-  console.log("Logging ip and date")
   logIpAndDate(req.socket.remoteAddress, datetime)
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "public","dist", "index.html"));
 });
 
-app.use(express.static('public'))
+app.use(express.static('public/dist'))
 
 
 
@@ -60,8 +55,119 @@ app.get("/version", (req, res) => {
   res.send(config.version)
 });
 
+app.get("/names", (req, res) => {
+  console.log("Names hit")
+  res.setHeader('content-type', 'application/json');
+  res.send(JSON.stringify({
+    'db_hostname' : DB_HOSTNAME,
+    'django_hostname' : DJANGO_HOSTNAME 
+  }))
+})
 
-// start express server on port 80
-app.listen(80, () => {
-  console.log("server started on port 80");
+app.use(express.json())
+
+// Endpoints that are forwarded to the django backend
+
+app.post("/initiateInteraction", (req,res) =>{
+  session_id = req.body.session_id
+  remote_ip = req.socket.remoteAddress
+  data = {
+    "session_id" : session_id,
+    "remote_ip" : remote_ip
+  }
+  const headers = {
+    'Content-Type': 'application/json',
+  }
+  console.log("Executing axios post")
+  console.log("Sending data ", data)
+  axios.post(`http://${config.DJANGO_HOSTNAME}/chat/init`, data, {
+      headers: headers
+    })
+    .then((response) => {
+      console.log("Django status ", response.status)
+      if (response.status != 200){
+        throw new Error('Django backend got error while initializing interaction')
+      }
+      else{
+        // Successful execution
+        res.status(200)
+        res.send()
+      }
+    })
+    .catch((error) => {
+      res.status(500)
+      res.send("Failed to connect to django backend")
+    })
+});
+
+app.post("/advanceInteraction", (req,res) =>{
+  data = {
+    "session_id" : req.body.session_id,
+    "message" : req.body.message
+  }
+  const headers = {
+    'Content-Type': 'application/json',
+  }
+  console.log("Executing axios post")
+  console.log("Sending data ", data)
+  axios.post(`http://${config.DJANGO_HOSTNAME}/chat/advance`, data, {
+      headers: headers
+    })
+    .then((response) => {
+      console.log("Django status ", response.status)
+      if (response.status != 200){
+        throw new Error('Django backend got error while initializing interaction')
+      }
+      else{
+        // Successful execution
+        console.log("Denise rsponse ", JSON.stringify(response.data))
+        res.status(200)
+        res.send(JSON.stringify(response.data))
+      }
+    })
+    .catch((error) => {
+      res.status(500)
+      res.send("Failed to connect to django backend")
+    })
+});
+
+app.post("/keepAlive", (req,res) =>{
+  data = {
+    "session_id" : req.body.session_id,
+  }
+  const headers = {
+    'Content-Type': 'application/json',
+  }
+  console.log("Executing axios post on keepAlive")
+  console.log("Sending data ", data)
+  axios.post(`http://${config.DJANGO_HOSTNAME}/chat/keepalive`, data, {
+      headers: headers
+    })
+    .then((response) => {
+      console.log("Django status ", response.status)
+      if (response.status != 200){
+        throw new Error('Django backend got error while initializing interaction')
+      }
+      else{
+        // Successful execution
+        res.status(200)
+        res.send()
+      }
+    })
+    .catch((error) => {
+      res.status(500)
+      res.send("Failed to connect to django backend")
+    })
+});
+
+
+if (config.DEV){
+  port = 3000
+}
+else {
+  port = 80
+}
+// start express server on port 3000
+app.listen(port, () => {
+  console.log(`server started on port ${port}`);
 });
