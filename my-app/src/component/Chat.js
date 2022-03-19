@@ -72,7 +72,10 @@ backendPost('/initiateInteraction', {'session_id' : session_id}).then(() =>{
   interactionInitiated = true
 })
 
-
+window.addEventListener('resize', (e) =>{
+  scrollToLastMessage()
+}
+)
 export default class Chat extends React.Component {
     constructor(props){
       super(props);
@@ -92,6 +95,9 @@ export default class Chat extends React.Component {
     onsend(){
       if (interactionInitiated){
         var text = document.getElementById("prompt").value
+        if (text==""){
+          return
+        }
         document.getElementById("prompt").value = ""
         this.addChild.bind(this)("user", text)
         scrollToLastMessage()

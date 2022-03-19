@@ -25,13 +25,15 @@ module.exports = {
         options: {
           name: '[name].[ext]'
         }
-    }
+      },
+      { test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+         loader: 'url-loader?limit=100000' }
     ]
   },
   resolve: { extensions: ["*", ".js", ".jsx"] },
   output: {
     path: path.resolve(__dirname + "/public/", "dist/"),
-    publicPath: "/public/dist/",
+    publicPath: "/",
     filename: "[name].bundle.js"
   },
 

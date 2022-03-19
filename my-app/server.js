@@ -68,6 +68,43 @@ app.use(express.json())
 
 // Endpoints that are forwarded to the django backend
 
+/**
+ * Pass on a request to the django backend (ambassador)
+ * and relay response as is
+ * 
+ * @param {} res express res
+ * @param {str} endpoint the full url of the host and path 
+ * @param {json} data  the data to send
+ */
+function djangoPostCall(res, endpoint, data){
+  return new Promise((resolve,reject) => {
+    const headers = {
+      'Content-Type': 'application/json',
+    }
+    axios.post(endpoint, data, {
+      headers: headers
+    })
+    .then((response) => {
+      if (response.status != 200){
+        throw new Error(`Django backend return status code ${response.status} 
+          while trying to contact ${endpoint}`)
+      }
+      else{
+        // Successful execution
+        res.status(200)
+        res.send(JSON.stringify(response.data))
+        resolve(response)
+      }
+    })
+    .catch((error) => {
+      res.status(500)
+      res.send("Failed to connect to django backend")
+      console.log(`Django backend error: ${error}`)
+    })
+
+  })
+}
+
 app.post("/initiateInteraction", (req,res) =>{
   session_id = req.body.session_id
   remote_ip = req.socket.remoteAddress
@@ -75,29 +112,7 @@ app.post("/initiateInteraction", (req,res) =>{
     "session_id" : session_id,
     "remote_ip" : remote_ip
   }
-  const headers = {
-    'Content-Type': 'application/json',
-  }
-  console.log("Executing axios post")
-  console.log("Sending data ", data)
-  axios.post(`http://${config.DJANGO_HOSTNAME}/chat/init`, data, {
-      headers: headers
-    })
-    .then((response) => {
-      console.log("Django status ", response.status)
-      if (response.status != 200){
-        throw new Error('Django backend got error while initializing interaction')
-      }
-      else{
-        // Successful execution
-        res.status(200)
-        res.send()
-      }
-    })
-    .catch((error) => {
-      res.status(500)
-      res.send("Failed to connect to django backend")
-    })
+  djangoPostCall(res, `http://${config.DJANGO_HOSTNAME}/chat/init`, data)
 });
 
 app.post("/advanceInteraction", (req,res) =>{
@@ -105,59 +120,15 @@ app.post("/advanceInteraction", (req,res) =>{
     "session_id" : req.body.session_id,
     "message" : req.body.message
   }
-  const headers = {
-    'Content-Type': 'application/json',
-  }
-  console.log("Executing axios post")
-  console.log("Sending data ", data)
-  axios.post(`http://${config.DJANGO_HOSTNAME}/chat/advance`, data, {
-      headers: headers
-    })
-    .then((response) => {
-      console.log("Django status ", response.status)
-      if (response.status != 200){
-        throw new Error('Django backend got error while initializing interaction')
-      }
-      else{
-        // Successful execution
-        console.log("Denise rsponse ", JSON.stringify(response.data))
-        res.status(200)
-        res.send(JSON.stringify(response.data))
-      }
-    })
-    .catch((error) => {
-      res.status(500)
-      res.send("Failed to connect to django backend")
-    })
+
+  djangoPostCall(res, `http://${config.DJANGO_HOSTNAME}/chat/advance`, data)
 });
 
 app.post("/keepAlive", (req,res) =>{
   data = {
     "session_id" : req.body.session_id,
   }
-  const headers = {
-    'Content-Type': 'application/json',
-  }
-  console.log("Executing axios post on keepAlive")
-  console.log("Sending data ", data)
-  axios.post(`http://${config.DJANGO_HOSTNAME}/chat/keepalive`, data, {
-      headers: headers
-    })
-    .then((response) => {
-      console.log("Django status ", response.status)
-      if (response.status != 200){
-        throw new Error('Django backend got error while initializing interaction')
-      }
-      else{
-        // Successful execution
-        res.status(200)
-        res.send()
-      }
-    })
-    .catch((error) => {
-      res.status(500)
-      res.send("Failed to connect to django backend")
-    })
+  djangoPostCall(res, `http://${config.DJANGO_HOSTNAME}/chat/keepalive`, data)
 });
 
 

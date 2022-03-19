@@ -1,29 +1,53 @@
 * {
     margin: 0px;
+   
+}
+
+@font-face {
+    font-family: myFirstFont;
+    src: url("./fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf");
+}
+
+* {
+    font-family: myFirstFont;
+}
+#root {
+}
+.front-page-header *{
+    animation: appear 2s forwards;
+    font-size: min(4vh, 4vw);
 }
 .app-container{
     display: flex;
     flex-direction: column;
-    height: 150vh;
 }
  
 .app-container > * {
     flex-grow: 1;
 }
-.header {
-    text-align: center;
+.front-page-header {
     background-color: #faedf1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-grow: 1;
+    height: 100vh;
 }
+.front-page-header .test{
+    position: absolute;
+    top: 43%;
+    width: auto;
+    left: 20%;
+    font-size: 18px;
+    right: 20%;
+    height: auto;
+bottom: 50%;
+}
+.front-page-header .Empth {
+    font-size: min(8vh, 8vw);
+}
+
 .header p {
     font-weight: bold;
     font-size: x-large;
 }
 .content {
-    background-color: white;
     flex-grow: 30;
 }
 .content p {
@@ -35,10 +59,27 @@
     font-size: large;
 }
 .intro {
-    inline-size: 30%;
     overflow-wrap: break-word;
+    margin-top: 10px;
 }
-
+.text-container-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.text-container {
+    border: black;
+    border-top-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+    border-left-style: none;
+    width: 50%;
+    border-style: solid;
+    border-radius: 52px;
+    margin: 10px;
+    padding: 28px;
+}
 .footer {
     text-align: center;
     color: black;
@@ -57,7 +98,7 @@ button {
     border-radius: 15px;
     color: #212121;
     z-index: 1;
-    background: #e8e8e8;
+    background: #faedf1;
     position: relative;
     font-weight: 1000;
     font-size: 17px;
@@ -117,6 +158,10 @@ button {
         margin-right:15vw;
         flex-direction: column;
     }
+    .button {
+        position: relative;
+        right: -60%;
+    }
 
     .user-message-container {
         display: flex;
@@ -158,4 +203,9 @@ button {
    @keyframes disappear {
     from {opacity: 1;}
     to {opacity: 0;}
+  }
+  /* Animation test */
+  @keyframes appear {
+    from {opacity: 0;}
+    to {opacity: 1;}
   }
